@@ -1,0 +1,290 @@
+\documentclass[useAMS, usenatbib, preprint, 12pt]{aastex}
+\usepackage{cite, natbib}
+\usepackage{float}
+\usepackage{epsfig}
+\usepackage{cases}
+\usepackage[section]{placeins}
+\usepackage{graphicx, subfigure}
+\usepackage{color}
+\usepackage{bm}
+
+\newcommand{\columbia}{1}
+\newcommand{\simons}{2}
+\newcommand{\nyu}{3}
+\newcommand{\cca}{4}
+\newcommand{\mpia}{5}
+\newcommand{\cds}{6}
+\newcommand{\naigrain}{333}
+\newcommand{\nmcquillan}{100}
+\newcommand{\kepexample}{1430163}
+\newcommand{\kepexampleperiod}{4}
+\newcommand{\aigrainexampleperiod}{20.8}
+\newcommand{\Kepler}{{\it Kepler}}
+\newcommand{\kepler}{\Kepler}
+\newcommand{\corot}{{\it CoRoT}}
+\newcommand{\Ktwo}{{\it K2}}
+\newcommand{\ktwo}{\Ktwo}
+\newcommand{\TESS}{{\it TESS}}
+\newcommand{\LSST}{{\it LSST}}
+\newcommand{\Wfirst}{{\it Wfirst}}
+\newcommand{\SDSS}{{\it SDSS}}
+\newcommand{\PLATO}{{\it PLATO}}
+\newcommand{\Gaia}{{\it Gaia}}
+\newcommand{\gaia}{{\it Gaia}}
+\newcommand{\Teff}{$T_{\mathrm{eff}}$}
+\newcommand{\teff}{$T_{\mathrm{eff}}$}
+\newcommand{\FeH}{[Fe/H]}
+\newcommand{\feh}{[Fe/H]}
+\newcommand{\ie}{{\it i.e.}}
+\newcommand{\eg}{{\it e.g.}}
+\newcommand{\logg}{log \emph{g}}
+\newcommand{\dnu}{$\Delta \nu$}
+\newcommand{\numax}{$\nu_{\mathrm{max}}$}
+
+\newcommand{\nstar}{1612}
+
+\newcommand{\racomment}[1]{{\color{red}#1}}
+
+\begin{document}
+
+\title{Measuring stellar ages with vertical kinematics}
+% Testing gyrochronology with galactic kinematics from \Gaia
+
+\author{%
+   Ruth Angus\altaffilmark{\columbia, }\altaffilmark{\simons},
+   David W. Hogg\altaffilmark{\nyu, }\altaffilmark{\cca, }\altaffilmark{\mpia}
+   Melissa Ness\altaffilmark{\columbia, }\altaffilmark{\mpia}
+   Megan Bedell\altaffilmark{\cca},
+   {\it et al.}
+}
+
+\altaffiltext{\columbia}{Department of Astronomy, Columbia
+University, NY, NY}
+\altaffiltext{\simons}{Simons Fellow, RuthAngus@gmail.com}
+\altaffiltext{\nyu}{Center for Cosmology and Particle Physics, New York
+University, NY, NY}
+\altaffiltext{\cca}{Center for Computational Astrophysics, Flatiron Institute,
+NY, NY}
+\altaffiltext{\mpia}{Max Planck Institute of Astronomy, Heidelberg, Germany}
+\altaffiltext{\cds}{Center for Data Science, New York University, NY, NY}
+
+
+\begin{abstract}
+Using the proper motions and positions of \nstar\ main sequence \Gaia\ and
+    \Kepler\ targets with previously measured rotation periods, we demonstrate
+    that gyrochronology age increases with vertical action dispersion.
+We calculate the ages of the \nstar\ stars with previously published
+    rotation periods that also feature in the TGAS (Tycho-Gaia Astrometric
+    Solution) database using a simple gyrochronology relation.
+We also estimate the vertical actions of these stars from their
+    two-dimensional TGAS proper motions and parallax.
+Using radial velocity measurements obtained for a subset of these stars, we
+    demonstrate that the vertical actions calculated from the two-dimensional
+    proper motions are adequately estimated due to the specific orientation of
+    the \Kepler\ field.
+We demonstrate that the gyrochronal ages of these stars scales with vertical
+    action dispersion.
+We show that the vertical action-age relations vary with stellar mass.
+This could either reflect the different ages of the different stellar
+    populations, or could be the result of an error in the gyrochronology
+    relations.
+Further, we show that the relation between vertical action and age does not
+    strongly depend on the specific gyrochronology model used to infer age.
+\racomment{Why is this?}
+Radial velocities of these stars, to be published in the second \gaia\ data
+    release should further clarify the relationship between gyrochronology age
+    and vertical action.
+\end{abstract}
+
+\section{Introduction}
+
+Age is one of the most elusive stellar parameters, particularly for stars on
+the main sequence.
+Isochrone fitting methods suffer from poor precision, especially when only
+photometric information is available, and asteroseismology is limited to a
+small sample of bright \kepler\ short cadence targets.
+Stellar rotation is often used to infer ages via gyrochronology, however it
+remains relatively untested at old ages due to the sparsity of precise data.
+The data in hand tell an intriguing story: they indicate that magnetic braking
+may cease altogether for old, slowly rotating stars.
+Here we investigate another dating method: galactic kinematics.
+
+Over the last few decades, observations of Milky Way stars with a range of
+ages have revealed that older stars have greater velocity dispersions than
+younger stars \citep[\eg][]{casagrande2011, aumer2011}.
+It is hypothesized that interactions between stars and spiral arms or massive
+gas clouds cause orbital heating and over time the mean velocity of a star
+will, on average, increase.
+Velocity however is not time invariant: it depends a star's orbital phase --
+for example whether it is closer to pericenter or apocenter.
+On the other hand, action angles {\it are} time invariant.
+The action of a star is its angular momentum integrated over the Milky Way
+potential (no integration would be necessary if the MW were a point mass at
+the galactic center) and this is constant no matter what orbital phase you
+happen to observe a star at.
+For this reason we use the age-action dispersion relation
+% Aumer M., Binney J. J., 2011, MNRAS, 397, 1286
+% Casagrande L., Scho ̈nrich R., Asplund M., Cassisi S., Ram ́ırez I., Mele ́ndezJ., Bensby T.,
+% Feltzing S., 2011, A&A, 530, A138
+We calculate the dispersion in vertical action for Gaia DR1 targets in the
+\kepler\ field.
+Although expected to be a weak tracer of age, vertical action dispersion
+should be an accurate one as the underlying physical processes are relatively
+simple and well understood.
+We test the potential of vertical action dispersion as a clock, by comparing
+age predictions to asteroseismic ages.
+Using the rotation periods of \kepler\ stars we also test the gyrochronology
+relations: does magnetic braking cease at late ages?
+
+The processes behind the formation of the galaxy and the formation of
+exoplanets are two complex topics in astrophysics connected by a common theme:
+stellar ages.
+Main sequence (MS) stars comprise the majority of our galaxy but unfortunately
+their ages are notoriously difficult to measure \citep[see][for a
+review]{Soderblom2010}.
+Their positions on the HR diagram don't change significantly during their
+hydrogen burning lifetimes, a fact that is convenient for life on Earth but
+inconvenient for galactic archaeologists.
+Now, due to the abundance of rotation periods for MS stars provided by Kepler
+and to-be provided by TESS, LSST and Wfirst, rotation-dating has the potential
+to be the most readily available precise method for inferring stellar ages.
+Rotation-dating works well for young stars but its accuracy is questionable
+for stars older than the Sun: old \kepler\ asteroseismic stars rotate more
+rapidly than expected given their age \citep{Angus2015, Vansaders2016,
+Metcalfe2016}.
+\citet{Vansaders2016} attribute this to an evolving magnetic dynamo: as stars
+reach an critical Rossby number (the ratio of rotation period to the
+convective overturn timescale), their magnetic field `switches off' and stars
+maintain a constant rotation period after that time.
+The data sets typically used to test the age-rotation relations are highly
+heterogeneous and each set has its own detection and selection biases.
+For example, asteroseismology favours quiet stars whereas rotation periods are
+easiest to measure for active stars.
+Here, we test the age-rotation relations by comparing rotational (gyrochronal)
+age with dynamical age.
+Data from the first \Gaia\ data release (DR1) provides kinematic ages for
+several MS \Kepler\ stars with detectable rotation periods.
+We use these kinematic ages to test the gyrochronology relations at all ages.
+% We use the vertical action-age relation for red giants to test the
+%     vertical action-age relation for MS stars.
+
+% A history of rotation-dating.
+\subsection{The status of gyrochronology}
+The phenomenon of magnetic braking in MS stars was first observed almost fifty
+years ago by \citet{Skumanich1972} who noticed that the rotation periods of
+the Sun and young cluster stars decayed with the square-root of time.
+% Later, a mass-dependence was added to the relation between age and rotation
+% period --- less massive stars lose angular momentum faster than more massive
+% one.
+\citet{Kawaler1988} derived a formalism for this angular momentum loss.
+ % and his
+% relation depended on the mass loss rate, the ....
+More recently, \citet{Barnes2003} demonstrated that a simple relation could be
+used to describe `gyrochronology', the method of rotation-dating, and further
+works \citep[\eg][]{Barnes2007, Mamajek2008, Barnes2010, Meibom2011},
+demonstrated that the relation between rotation period and age holds true
+while theorists \citep[\eg][]{Matt2012, Epstein2014, Vansaders2013,
+Vansaders2015} modify and extend physical models that reproduce the
+observations.
+
+As discussed above, the performance of the age-rotation relations for old
+stars was recently called into question \citep{Angus2015, Vansaders2016,
+Metcalfe2016}.
+A simple straight-line model for rotational age does not reproduce the ages
+predicted by asteroseismology for stars older than the Sun.
+This phenomenon is attributed to a transitioning magnetic dynamo at a critical
+Rossby number, $Ro$, of 2.6, the solar value \citep{Vansaders2016}.
+As rotation periods slow, $Ro$ decreases until it hits the critical value and
+magnetic braking switches off: stars maintain their rotation period from that
+point onward.
+This restricts the applicability of gyrochronology to young, rapidly rotating
+stars only.
+This hypothesis is supported by the existing data, however these data are
+sparse~---~the analyses demonstrating the discrepancies were conducted on the
+small number of main sequence, Solar-like oscillators observed by Kepler in
+short cadence mode with detectable rotation periods: a sample size of around
+20.
+% Furthermore, asteroseismology favors stars with low surface gravities since
+% they show the largest amplitudes of oscillation and the majority of stars in
+% this sample were slightly evolved.
+A larger sample of old main sequence stars with precise ages is required to
+confirm and further characterize the Rossby saturation mechanism introduced by
+\citep{Vansaders2016}.
+However, old main sequence stars are difficult to age-date with any other
+method than asteroseismology.
+We use the age gradients in the kinematic properties of stars to investigate
+the \citet{Vansaders2016} model.
+
+\subsection{Kinematic ages}
+The age-velocity dispersion relations are based on relatively simple physics.
+There is evidence to suggest that stars in the Milky Way form in the thin disc
+of the galaxy with relatively small vertical velocities and angular momenta
+\racomment{add citations}.
+As time passes these stars are scattered via close encounters with other
+stars and interactions with galactic spiral arms.
+The more time passes, the more scattering events, and stars slowly accumulate
+angular momentum in the vertical direction, known as vertical action.
+This results in a slow heating of stellar orbits.
+Older stars can be identified in Gaia DR1 by integrating their orbits in the
+potential of the Milky Way to convert their proper motions, positions and
+parallaxes into vertical actions.
+It is the {\it dispersion} in vertical action that truly traces age, far
+better than vertical action itself.
+However for single stars only the individual's vertical action is available.
+Nonetheless, $J_z^2$ increases over time for any given star, and is a weak
+tracer of age.
+
+\section{The Data}
+
+\begin{itemize}
+    \item{TGAS - Kepler rotators}
+    \item{TGAS - Asteroseismic giants}
+    \item{TGAS - Asteroseismic dwarfs/subgiants}
+\end{itemize}
+
+\section{The Method}
+
+\begin{itemize}
+    \item{Vert action (JZ) RMS as a function of age for various age
+        indicators.}
+        \subitem{ - Barnes (2007), (2010)/Mamajek \& Hillenbrand (2008)/ Angus
+        (2015) /Matt (2012)/ van Saders (2013)/ van Saders (2016).}
+    \item{Some understanding of how much we need to know RV to do this right.}
+        \subitem{ - Simulate results with random RVs}
+    \item{Use of this to cross-calibrate different age indicators.}
+    \item{Some understanding of how sensitive we are to crazy selection.}
+        \subitem{- Seismology, rotation, TGAS, Kepler.}
+    \item{Comments on prospect for using JZ as an age indicator directly.}
+        \subitem{- What precision?}
+\end{itemize}
+
+% Rotation period measurement. Citation for Angus et al? (Woohoo!)
+
+% Red Giant relations.
+
+% Model comparison.
+
+\section{Results and Discussion}
+
+% Findings
+
+% Implications.
+
+\section{Conclusion}
+
+% We're awesome
+
+% acknowledgements
+This research was funded by the Simons Foundation.
+Some of the data presented in this paper were obtained from the Mikulski
+Archive for Space Telescopes (MAST).
+STScI is operated by the Association of Universities for Research in
+Astronomy, Inc., under NASA contract NAS5-26555.
+Support for MAST for non-HST data is provided by the NASA Office of Space
+Science via grant NNX09AF08G and by other grants and contracts.
+This paper includes data collected by the Kepler mission. Funding for the
+Kepler mission is provided by the NASA Science Mission directorate.
+
+\bibliographystyle{plainnat}
+\bibliography{granola}
+\end{document}
