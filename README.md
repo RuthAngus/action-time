@@ -1,3 +1,7 @@
+require 'github/markup'
+
+GitHub::Markup.render_s(GitHub::Markups::MARKUP_MARKDOWN, "* One\n* Two")
+
 # action-time
 Comparing kinematic ages with gyrochronal ages.
 
