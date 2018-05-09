@@ -2,14 +2,15 @@
 Comparing kinematic ages with gyrochronal ages.
 
 Things to do next include:
-. [ ] Use distance posteriors provided by Coryn:
+1. [ ] Use distance posteriors provided by Coryn:
 https://arxiv.org/abs/1804.10121.
-. [ ] Calculate vertical actions with uncertainties, including correlations
+2. [ ] Calculate vertical actions with uncertainties, including correlations
 between parameters.
-. [ ] Use van Saders models too (ask Jen if she wants to join the project!).
-. [ ] Test whether van Saders model seems to make a difference.
-. [x] Compare with Jason Sanders' theoretical models.
-. [ ] Look at other kinematic age indicators like velocities, etc.
-. [ ] Convert the vertical actions into age estimates and make an age vs age
+3. [x] Compare with approximate van Saders model.
+4. [ ] Ask Jen if she wants to join the project.
+5. [x] Compare with Jason Sanders' theoretical models.
+    5a. [ ] Ask Jason for clarification.
+6. [ ] Look at other kinematic age indicators like velocities, etc.
+7. [ ] Convert the vertical actions into age estimates and make an age vs age
 plot.
-. [ ] Write the paper.
+8. [ ] Write the paper.
