@@ -71,21 +71,34 @@ def gen_sample_set(d, N, parallax=False, plot=False):
     # Sample from the covariance matrix.
     corr_samps = np.random.multivariate_normal(mus, C, size=N).T
 
-    if plot:
-        figure = corner.corner(corr_samps.T, labels=labels)
-        if parallax:
-            plt.savefig("covariances_parallax_{}".format(d.kepid))
-        else:
-            plt.savefig("covariances_{}".format(d.kepid))
-
     # Sample from distance posterior.
     d_samps = np.mean([d.r_lo, d.r_hi])*np.random.randn(N) + d.r_est
     rv_samps = d.radial_velocity_error*np.random.randn(N) + d.radial_velocity
 
+    # Make a corner plot and histograms of the samples.
+    if plot:
+        figure = corner.corner(corr_samps.T, labels=labels)
+        if parallax:
+            plt.savefig("covariances_parallax_{}".format(d.kepid))
+            plt.close()
+        else:
+            plt.savefig("covariances_{}".format(d.kepid))
+            plt.close()
+
+        plt.hist(d_samps, 100)
+        plt.savefig("d_samps_{}".format(d.kepid))
+        plt.xlabel("Distance [kpc]")
+        plt.close()
+
+        plt.hist(rv_samps, 100)
+        plt.savefig("rv_samps_{}".format(d.kepid))
+        plt.xlabel("Radial velocity [km/s]")
+        plt.close()
+
     return corr_samps, d_samps, rv_samps
 
 
-def calc_actions_from_samples(Nsamps, samples, d_samps, rv_samps):
+def calc_actions_from_samples(Nsamps, samples, d_samps, rv_samps, plot=False):
     """
     Call Wilma's action function and calculate actions for each sample.
     params:
@@ -99,7 +112,11 @@ def calc_actions_from_samples(Nsamps, samples, d_samps, rv_samps):
         1d array of distance samples. len = Nsamps.
     rv_samps: (array)
         1d array of radial velocity samples. len = Nsamps.
-    return
+    plot: (bool)
+        If true a corner plot of the action samples will be created for a
+        randomly chosen star.
+
+    returns:
     ======
     action_samps: (2d array)
         Array containing samples of each of the values calculated by
@@ -113,8 +130,6 @@ def calc_actions_from_samples(Nsamps, samples, d_samps, rv_samps):
         jR: Samples of Radial action.
         lz: Samples of ...
         jz: Samples of vertical action.
-    jz_samps: (1d array)
-        Just the vertical action samples, again.
     """
     assert Nsamps <= len(d_samps), "Nsamps must not exceed the number of " \
         "available samples"
@@ -127,11 +142,47 @@ def calc_actions_from_samples(Nsamps, samples, d_samps, rv_samps):
     # R_kpc, phi_rad, z_kpc, vR_kms, vT_kms, vz_kms, jR, lz, jz
     action_samps = np.zeros((Nsamps, 9))  # actions returns 9 values.
 
-    for i in range(Nsamps):
-        action_samps[i, :] = action(ra_samps[i], dec_samps[i], d_samps[i],
-                                    pmra_samps[i],  pmdec_samps[i],
-                                    rv_samps[i])
-    return action_samps, action_samps[:, -1]
+    for j in tqdm(range(Nsamps)):
+        action_samps[j, :] = action(ra_samps[j], dec_samps[j], d_samps[j],
+                                    pmra_samps[j],  pmdec_samps[j],
+                                    rv_samps[j])
+
+    if plot:
+
+        labels = ["$R~[\mathrm{kpc}]$", "$\phi~[\mathrm{rad}]$",
+                  "$Z~[\mathrm{kpc}]$", "$v_R~[\mathrm{kms}]$",
+                  "$v_T~[\mathrm{kms}]$", "$v_z~[\mathrm{kms}]$", "$j_R$",
+                  "$l_z$", "$j_z$"]
+        figure = corner.corner(action_samps, labels=labels)
+        plt.savefig("action_covariances_star_{}".format(i))
+        plt.close()
+
+    return action_samps
+
+
+def stats_from_samps(samps):
+    """ Calculate medians and uncertainties from a set of samples,
+    samps: (array)
+        1d array with samples.
+    returns:
+    =======
+    samps: (1d array)
+     Just the vertical action samples, again.
+     (float)
+     The median of the jz_samples.
+    err: (float)
+     The standard deviation of the jz_samples.
+    errp: (float)
+     The upper uncertainty on jz.
+    errm: (float)
+        The lower uncertainty on jz.
+    """
+
+    mu, std = np.median(samps), np.std(samps)
+    upper = np.percentile(samps, 84)
+    lower = np.percentile(samps, 16)
+    errp, errm = upper - mu, mu - lower
+    return mu, std, errp, errm
 
 
 if __name__ == "__main__":
@@ -140,10 +191,40 @@ if __name__ == "__main__":
     mc = pd.read_csv("data/mcquillan_stars_with_vertical_action.csv")
     N = 10000
 
-    # Generate samples with covariances for Gaia parameters for each star.
+    # Generate samples with covariances of Gaia parameters for each star.
     nstars = np.shape(mc)[0]
+
+    R_kpc, phi_rad, z_kpc, vR_kms, vT_kms, vz_kms, jR, lz, jz = \
+        [np.zeros(nstars) for i in range(9)]
+    R_err, phi_err, z_err, vR_err, vT_err, vz_err, jR_err, lz_err, jz_err = \
+        [np.zeros(nstars) for i in range(9)]
+
+    # Calculate actions for N samples
     for i in range(nstars):
+        print("star", i, "of", nstars)
         samps, d_samps, rv_samps = gen_sample_set(mc.iloc[i], N)
-        action_samps, jz_samps = calc_actions_from_samples(10, samps, d_samps,
-                                                           rv_samps)
-        assert 0
+
+        print("Calculating action samples for star", i)
+        action_samps = calc_actions_from_samples(N, samps, d_samps, rv_samps)
+
+        R_kpc[i], R_err[i], _, _ = stats_from_samps(action_samps[:, 0])
+        phi_rad[i], phi_err[i], _, _ = stats_from_samps(action_samps[:, 1])
+        z_kpc[i], z_err[i], _, _ = stats_from_samps(action_samps[:, 2])
+        vR_kms[i], vR_err[i], _, _ = stats_from_samps(action_samps[:, 3])
+        vT_kms[i], vT_err[i], _, _ = stats_from_samps(action_samps[:, 4])
+        vz_kms[i], vz_err[i], _, _ = stats_from_samps(action_samps[:, 5])
+        jR[i], jR_err[i], _, _ = stats_from_samps(action_samps[:, 6])
+        lz[i], lz_err[i], _, _ = stats_from_samps(action_samps[:, 7])
+        jz[i], jz_err[i], _, _ = stats_from_samps(action_samps[:, 8])
+
+    # Save results back into the dataframe
+    mc["R_kpc"], mc["R_err"] = R_kpc, R_err
+    mc["phi_rad"], mc["phi_err"] = phi_rad, phi_err
+    mc["z_kpc"], mc["z_err"] = z_kpc, z_err
+    mc["vR_kms"], mc["vR_err"] = vR_kms, vR_err
+    mc["vT_kms"], mc["vT_err"] = vT_kms, vT_err
+    mc["vz_kms"], mc["vz_err"] = vz_kms, vz_err
+    mc["jR"], mc["jR_err"] = jR, jR_err
+    mc["lz"], mc["lz_err"] = lz, lz_err
+    mc["jz"], mc["jz_err"] = jz, jz_err
+    mc.to_csv("data/mcquillan_stars_with_jz_uncerts.csv")
