@@ -35,43 +35,33 @@ def gen_sample_set(d, N, parallax=False, plot=False):
         Number of samples.
     """
 
-    mus = np.array([d.ra.values, d.dec.values, d.pmra.values,
-                    d.pmdec.values])
+    mus = np.array([d.ra, d.dec, d.pmra, d.pmdec])
     C = np.matrix([
-        [d.ra_error.values**2, d.ra_dec_corr.values,
-            d.ra_pmra_corr.values, d.ra_pmdec_corr.values],
-        [d.ra_dec_corr.values, d.dec_error.values**2,
-            d.dec_pmra_corr.values, d.dec_pmdec_corr.values],
-        [d.ra_pmra_corr.values, d.dec_pmra_corr.values,
-            d.pmra_error.values**2, d.pmra_pmdec_corr.values],
-        [d.ra_pmdec_corr.values, d.dec_pmdec_corr.values,
-            d.pmra_pmdec_corr.values, d.pmdec_error.values**2]
+        [d.ra_error**2, d.ra_dec_corr, d.ra_pmra_corr, d.ra_pmdec_corr],
+        [d.ra_dec_corr, d.dec_error**2, d.dec_pmra_corr, d.dec_pmdec_corr],
+        [d.ra_pmra_corr, d.dec_pmra_corr, d.pmra_error**2, d.pmra_pmdec_corr],
+        [d.ra_pmdec_corr, d.dec_pmdec_corr, d.pmra_pmdec_corr,
+         d.pmdec_error**2]
                     ])
     labels=["$\mathrm{RA~[degrees]}$", "$\mathrm{dec~[degrees]}$",
             "$\mu_{\mathrm{RA}}\mathrm{~[mas/year]}$",
             "$\mu_{\mathrm{dec}}\mathrm{~[mas/year]}$"]
 
     if parallax:
-        mus = np.array([d.ra.values, d.dec.values, d.pmra.values,
-                        d.pmdec.values, d.parallax.values])
+        mus = np.array([d.ra, d.dec, d.pmra, d.pmdec, d.parallax])
         C = np.matrix([
-            [d.ra_error.values**2, d.ra_dec_corr.values,
-                d.ra_pmra_corr.values, d.ra_pmdec_corr.values,
-                d.ra_parallax_corr.values],
-            [d.ra_dec_corr.values, d.dec_error.values**2,
-                d.dec_pmra_corr.values, d.dec_pmdec_corr.values,
-                d.dec_parallax_corr.values],
-            [d.ra_pmra_corr.values, d.dec_pmra_corr.values,
-                d.pmra_error.values**2, d.pmra_pmdec_corr.values,
-                d.parallax_pmra_corr.values],
-            [d.ra_pmdec_corr.values, d.dec_pmdec_corr.values,
-                d.pmra_pmdec_corr.values, d.pmdec_error.values**2,
-                d.parallax_pmdec_corr.values],
-            [d.ra_parallax_corr.values, d.dec_parallax_corr.values,
-                d.parallax_pmra_corr.values,
-                d.parallax_pmdec_corr.values,
-                d.parallax_error.values**2]
-                    ])
+            [d.ra_error**2, d.ra_dec_corr, d.ra_pmra_corr, d.ra_pmdec_corr,
+             d.ra_parallax_corr],
+            [d.ra_dec_corr, d.dec_error**2, d.dec_pmra_corr, d.dec_pmdec_corr,
+             d.dec_parallax_corr],
+            [d.ra_pmra_corr, d.dec_pmra_corr, d.pmra_error**2,
+             d.pmra_pmdec_corr, d.parallax_pmra_corr],
+            [d.ra_pmdec_corr, d.dec_pmdec_corr, d.pmra_pmdec_corr,
+             d.pmdec_error**2, d.parallax_pmdec_corr],
+            [d.ra_parallax_corr, d.dec_parallax_corr, d.parallax_pmra_corr,
+             d.parallax_pmdec_corr,
+             d.parallax_error**2]
+                       ])
         labels=["$\mathrm{RA~[degrees]}$", "$\mathrm{dec~[degrees]}$",
                 "$\mu_{\mathrm{RA}}\mathrm{~[mas/year]}$",
                 "$\mu_{\mathrm{dec}}\mathrm{~[mas/year]}$",
@@ -83,11 +73,12 @@ def gen_sample_set(d, N, parallax=False, plot=False):
     if plot:
         figure = corner.corner(corr_samps.T, labels=labels)
         if parallax:
-            plt.savefig("covariances_parallax_{}".format(d.kepid.values[i]))
+            plt.savefig("covariances_parallax_{}".format(d.kepid))
         else:
-            plt.savefig("covariances_{}".format(d.kepid.values[i]))
+            plt.savefig("covariances_{}".format(d.kepid))
 
     return corr_samps
+
 
 if __name__ == "__main__":
 
