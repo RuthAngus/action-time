@@ -189,7 +189,7 @@ if __name__ == "__main__":
 
     # Load the csv of the targets, made with the action_time.ipynb notebook.
     mc = pd.read_csv("data/mcquillan_stars_with_vertical_action.csv")
-    N = 10000
+    N = 100
 
     # Generate samples with covariances of Gaia parameters for each star.
     nstars = np.shape(mc)[0]
@@ -207,24 +207,48 @@ if __name__ == "__main__":
         print("Calculating action samples for star", i)
         action_samps = calc_actions_from_samples(N, samps, d_samps, rv_samps)
 
-        R_kpc[i], R_err[i], _, _ = stats_from_samps(action_samps[:, 0])
-        phi_rad[i], phi_err[i], _, _ = stats_from_samps(action_samps[:, 1])
-        z_kpc[i], z_err[i], _, _ = stats_from_samps(action_samps[:, 2])
-        vR_kms[i], vR_err[i], _, _ = stats_from_samps(action_samps[:, 3])
-        vT_kms[i], vT_err[i], _, _ = stats_from_samps(action_samps[:, 4])
-        vz_kms[i], vz_err[i], _, _ = stats_from_samps(action_samps[:, 5])
-        jR[i], jR_err[i], _, _ = stats_from_samps(action_samps[:, 6])
-        lz[i], lz_err[i], _, _ = stats_from_samps(action_samps[:, 7])
-        jz[i], jz_err[i], _, _ = stats_from_samps(action_samps[:, 8])
+        # Save samples in HDF5 file
+        sample_df = pd.DataFrame(dict({"RA_deg": samps[0, :],
+                                       "dec_deg": samps[1, :],
+                                       "pmRA_masyr": samps[2, :],
+                                       "pmdec_masyr": samps[3, :],
+                                       "distance_kpc": d_samps,
+                                       "RV_kms": rv_samps,
+                                       "R_kpc": action_samps[:, 0],
+                                       "phi_rad": action_samps[:, 1],
+                                       "z_kpc": action_samps[:, 2],
+                                       "vR_kms": action_samps[:, 3],
+                                       "vT_kms": action_samps[:, 4],
+                                       "vz_kms": action_samps[:, 5],
+                                       "jR": action_samps[:, 6],
+                                       "lz": action_samps[:, 7],
+                                       "jz": action_samps[:, 8],
+                                       }))
 
-    # Save results back into the dataframe
-    mc["R_kpc"], mc["R_err"] = R_kpc, R_err
-    mc["phi_rad"], mc["phi_err"] = phi_rad, phi_err
-    mc["z_kpc"], mc["z_err"] = z_kpc, z_err
-    mc["vR_kms"], mc["vR_err"] = vR_kms, vR_err
-    mc["vT_kms"], mc["vT_err"] = vT_kms, vT_err
-    mc["vz_kms"], mc["vz_err"] = vz_kms, vz_err
-    mc["jR"], mc["jR_err"] = jR, jR_err
-    mc["lz"], mc["lz_err"] = lz, lz_err
-    mc["jz"], mc["jz_err"] = jz, jz_err
-    mc.to_csv("data/mcquillan_stars_with_jz_uncerts.csv")
+        store_export = pd.HDFStore("data/samples/{}_samples.h5"
+                                   .format(mc.kepid.values[i]))
+        store_export.append("samples", sample_df,
+                            data_columns=sample_df.columns)
+        store_export.close()
+
+        # R_kpc[i], R_err[i], _, _ = stats_from_samps(action_samps[:, 0])
+        # phi_rad[i], phi_err[i], _, _ = stats_from_samps(action_samps[:, 1])
+        # z_kpc[i], z_err[i], _, _ = stats_from_samps(action_samps[:, 2])
+        # vR_kms[i], vR_err[i], _, _ = stats_from_samps(action_samps[:, 3])
+        # vT_kms[i], vT_err[i], _, _ = stats_from_samps(action_samps[:, 4])
+        # vz_kms[i], vz_err[i], _, _ = stats_from_samps(action_samps[:, 5])
+        # jR[i], jR_err[i], _, _ = stats_from_samps(action_samps[:, 6])
+        # lz[i], lz_err[i], _, _ = stats_from_samps(action_samps[:, 7])
+        # jz[i], jz_err[i], _, _ = stats_from_samps(action_samps[:, 8])
+
+    # # Save results back into the dataframe
+    # mc["R_kpc"], mc["R_err"] = R_kpc, R_err
+    # mc["phi_rad"], mc["phi_err"] = phi_rad, phi_err
+    # mc["z_kpc"], mc["z_err"] = z_kpc, z_err
+    # mc["vR_kms"], mc["vR_err"] = vR_kms, vR_err
+    # mc["vT_kms"], mc["vT_err"] = vT_kms, vT_err
+    # mc["vz_kms"], mc["vz_err"] = vz_kms, vz_err
+    # mc["jR"], mc["jR_err"] = jR, jR_err
+    # mc["lz"], mc["lz_err"] = lz, lz_err
+    # mc["jz"], mc["jz_err"] = jz, jz_err
+    # mc.to_csv("data/mcquillan_stars_with_jz_uncerts.csv")
