@@ -16,4 +16,5 @@ between parameters.
 plot.
 9. [ ] Compare with AVR for Cannon giants (APOGEE, RAVE) and asteroseismic
 giants.
-10. [ ] Write the paper.
+10. [ ] Look at the AVR for stars with different metallicities.
+11. [ ] Write the paper.
