@@ -2,15 +2,18 @@
 Comparing kinematic ages with gyrochronal ages.
 
 Things to do next include:
-1. [ ] Use distance posteriors provided by Coryn:
+1. [x] Use distance posteriors provided by Coryn:
 https://arxiv.org/abs/1804.10121.
-2. [ ] Calculate vertical actions with uncertainties, including correlations
+2. [ ] Check I'm doing the right thing with posteriors/likelihoods!
+3. [x] Calculate vertical actions with uncertainties, including correlations
 between parameters.
-3. [x] Compare with approximate van Saders model.
-4. [ ] Ask Jen if she wants to join the project.
-5. [x] Compare with Jason Sanders' theoretical models.
-    5a. [ ] Ask Jason for clarification.
-6. [ ] Look at other kinematic age indicators like velocities, etc.
-7. [ ] Convert the vertical actions into age estimates and make an age vs age
+4. [x] Compare with approximate van Saders model.
+5. [x] Ask Jen if she wants to join the project.
+6. [x] Compare with Jason Sanders' theoretical models.
+    6a. [ ] Ask Jason for clarification.
+7. [ ] Look at other kinematic age indicators like velocities, etc.
+8. [ ] Convert the vertical actions into age estimates and make an age vs age
 plot.
-8. [ ] Write the paper.
+9. [ ] Compare with AVR for Cannon giants (APOGEE, RAVE) and asteroseismic
+giants.
+10. [ ] Write the paper.
